@@ -3,20 +3,21 @@ name: Deploy Application to EKS with Helm
 on:
   workflow_call:
     inputs:
-      K8S_CLUSTER_NAME:
+      CODE_REPO:
         required: true
+        type: string
+      K8S_CLUSTER_NAME:
+        required: false
         type: string
       K8S_REGION:
-        required: true
+        required: false
         type: string
       HELM_CHART_PATH:
-        required: true
+        required: false
         type: string
       RELEASE_NAME:
-        required: true
+        required: false
         type: string
-    secrets:
-      inherit: true
   workflow_dispatch:  
   
 jobs:
@@ -25,7 +26,9 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.CODE_REPO }}
 
     - name: Set up AWS CLI
       uses: aws-actions/configure-aws-credentials@v3
