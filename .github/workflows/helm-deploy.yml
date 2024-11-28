@@ -1,0 +1,51 @@
+name: Deploy Application to EKS with Helm
+
+on:
+  workflow_call:
+    inputs:
+      K8S_CLUSTER_NAME:
+        required: true
+        type: string
+      K8S_REGION:
+        required: true
+        type: string
+      HELM_CHART_PATH:
+        required: true
+        type: string
+      RELEASE_NAME:
+        required: true
+        type: string
+    secrets:
+      inherit: true
+  workflow_dispatch:  
+  
+jobs:
+  deploy_eks:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.K8S_REGION }}
+
+    - name: Set up kubectl
+      uses: aws-actions/amazon-eks-kubeconfig-action@v1
+      with:
+        cluster-name: ${{ inputs.K8S_CLUSTER_NAME }}
+        region: ${{ inputs.K8S_REGION }}
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        helm version
+
+    - name: Helm Deploy to EKS
+      run: |
+        helm upgrade --install ${{ inputs.RELEASE_NAME }} ${{
+          inputs.HELM_CHART_PATH }} --namespace default --create-namespace
