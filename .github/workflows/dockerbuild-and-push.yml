@@ -7,7 +7,18 @@ on:
         required: true
         type: string
     secrets:
-      inherit: true
+      REGISTRY_URL:
+        description: 'Registry URL to pull the docker images from'
+        required: false
+      ECR_URL:
+        description: 'ECR URL to push the docker image to'
+        required: false
+      AWS_ROLE_ARN:
+        description: 'ARN of the AWS Role to assume when pushing to ECR'
+        required: false
+      AWS_REGION:
+        description: 'The default AWS Region'
+        required: false
   workflow_dispatch:
     
 
