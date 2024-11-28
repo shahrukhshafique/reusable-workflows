@@ -5,6 +5,7 @@ on:
         description: 'repository name'
         required: true
         type: string
+  workflow_dispatch:
 
 jobs:
   maven-build:
