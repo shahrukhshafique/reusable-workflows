@@ -1,48 +1,50 @@
+name: Docker Build and Push
+
 on:
   workflow_call:
     inputs:
       CODE_REPO:
-        description: 'repository name'
         required: true
         type: string
     secrets:
-      REGISTRY_URL:
-        description: 'Registry URL to pull the docker images from'
-        required: false
-      ECR_URL:
-        description: 'ECR URL to push the docker image to'
-        required: false
-      AWS_ROLE_ARN:
-        description: 'ARN of the AWS Role to assume when pushing to ECR'
-        required: false
-      AWS_REGION:
-        description: 'The default AWS Region'
-        required: false
+      inherit: true
+  workflow_dispatch:
+    
 
 jobs:
-   docker-build-and-push:
+  docker_build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.CODE_REPO }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.CODE_REPO }}
 
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: the-jar-file
-      - name: Display structure of downloaded files
-        run: ls -R
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ inputs.CODE_REPO }}:latest .
 
-      - name: Build Docker image
-        run: |
-          docker build -t webapp .
-        
-      - name: Push Docker image (optional)
-        run: |
-          docker tag webapp my-repository/webapp:latest
-          docker push my-repository/webapp:latest
+    - name: Tag Docker image
+      run: |
+        docker tag ${{ inputs.CODE_REPO }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY }}:latest
+    
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Log in to Amazon ECR
+      run: |
+        aws --version
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+    - name: Push Docker image to ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPOSITORY }}:latest
