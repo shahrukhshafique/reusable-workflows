@@ -39,7 +39,7 @@ jobs:
     uses: shahrukhshafique/reusable-workflows/.github/workflows/build.yml@main
     with:
       CODE_REPO: ${{ github.repository }}
-
+```
 
 ### Workflow 2: `Docker Build and Push`
 
@@ -63,6 +63,7 @@ jobs:
     with:
       CODE_REPO: ${{ github.repository }}
     secrets: inherit
+```
 
 ### Workflow 3: `Deploy Application to EKS with Helm`
 
@@ -86,4 +87,4 @@ jobs:
       CODE_REPO: "shahrukhshafique/helm-charts"
       path: webapp
     secrets: inherit
-
+```
