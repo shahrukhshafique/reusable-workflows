@@ -1,0 +1,25 @@
+# Ignore workflow run outputs and logs
+.github/workflows/*.log
+
+# Ignore GitHub Actions build artifacts
+.github/workflows/*.zip
+.github/workflows/*.tar.gz
+.github/workflows/*.tgz
+
+# Ignore temporary files created by the editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore environment variable files (e.g., .env)
+*.env
+
+# Ignore secrets or sensitive files
+*.tfvars
+*.yaml
+
