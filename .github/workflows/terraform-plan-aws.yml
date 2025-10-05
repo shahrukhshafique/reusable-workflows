@@ -3,6 +3,10 @@ name: Reusable - Terraform Plan
 on:
   workflow_call:
     inputs:
+      additional_init_args:
+        type: string
+        required: false
+        default: ""
       lock_timeout:
         type: string
         required: false
