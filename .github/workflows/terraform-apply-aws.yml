@@ -1,4 +1,5 @@
-name: Reusable - Terraform Plan
+name: "Terraform Apply"
+
 
 on:
   workflow_call:
@@ -76,6 +77,10 @@ jobs:
       - name: Set up AWS CLI
         uses: aws-actions/setup-sam@v2
 
+      - name: Download Plan from S3
+        run: |
+          aws s3 cp s3://${{ vars.PLAN_S3_BUCKET}}/${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }}
+
       - name: Terraform Init
         id: init
         shell: bash
@@ -86,19 +91,10 @@ jobs:
           set -e
           terraform init -input=false ${{ inputs.additional_init_args }}
 
-      - name: Terraform Plan
-        id: plan
-        shell: bash
-        working-directory: ${{ env.WD }}
-        run: |
-          terraform plan -var-file=../../${{ vars.TERRAFORM_TFVARS }} -out=tfplan-${{ github.event.pull_request.number }}
-
-      - name: Upload Plan to Artifact
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: terraform-plan-${{ github.event.pull_request.number }}
-          path: ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }}
-
-      - name: Upload Plan to S3
-        run: |
-          aws s3 cp ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/${{ github.event.pull_request.base.ref }}/
+      # - name: Terraform Apply
+      #   id: apply
+      #   shell: bash
+      #   working-directory: ${{ env.WD }}
+      #   run: |
+      #     echo "Applying Terraform Plan tfplan-${{ github.event.pull_request.number }}"
+      #     terraform apply -input=false -auto-approve tfplan-${{ github.event.pull_request.number }} | tee output.txt
