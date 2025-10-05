@@ -19,7 +19,7 @@ on:
       checkov:
         type: boolean
         required: false
-        default: false
+        default: true
       checkov_soft_fail:
         type: boolean
         required: false
