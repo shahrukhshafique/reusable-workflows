@@ -2,6 +2,11 @@ name: Reusable - Terraform Plan
 
 on:
   workflow_call:
+    inputs:
+      lock_timeout:
+        type: string
+        required: false
+        default: "5m"
     secrets:
       ASSUME_ROLE_ARN:
         required: true
