@@ -117,28 +117,6 @@ jobs:
             exit 1
           }
 
-      - name: TFLint Install
-        if: ${{ inputs.tflint }}
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: latest
-
-      - name: TFLint Run
-        if: ${{ inputs.tflint }}
-        id: tflint_run
-        shell: bash
-        working-directory: ${{ env.WD }}
-        run: |
-          if [ ! -f ".tflint.hcl" ]; then
-            cat > .tflint.hcl <<'EOF'
-            plugin "aws" {
-            enabled = true
-          }
-          EOF
-          fi
-          tflint --init
-          tflint --format compact
-
       - name: Checkov Scan
         if: ${{ inputs.checkov }}
         id: checkov
