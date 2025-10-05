@@ -1,0 +1,110 @@
+name: "Terraform Plan"
+
+on:
+  workflow_call:
+    inputs:
+      additional_init_args:
+        type: string
+        required: false
+        default: ""
+    secrets:
+      ASSUME_ROLE_ARN:
+        required: true
+        description: "AWS IAM role to assume via OIDC for backend/provider init (was input assume_role_arn)"
+      DEVOPS_WORKFLOW_TOKEN:
+        required: true
+        description: "Reserved for future use (e.g., PR annotations/comments)"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-ci:
+    name: Terraform Static / Init Validation
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.pull_request.base.ref }}
+    concurrency:
+      group: terraform-ci-${{ github.workflow }}-${{ github.ref }}-${{ vars.WORKING_DIRECTORY }}
+      cancel-in-progress: false
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      WD: ${{ vars.WORKING_DIRECTORY }}
+      TF_LOCK_TIMEOUT: ${{ inputs.lock_timeout }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: '${{ secrets.ASSUME_ROLE_ARN }}'
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: terraform-ci-${{ github.run_id }}
+          role-duration-seconds: 7200
+
+      - name: Show Terraform & AWS Caller
+        shell: bash
+        run: |
+          terraform -version
+          aws sts get-caller-identity || true
+
+      - name: Register tfvars file (if provided)
+        if: ${{ vars.TERRAFORM_TFVARS != '' }}
+        shell: bash
+        run: |
+          if [ ! -f "${{ vars.TERRAFORM_TFVARS }}" ]; then
+            echo "::warning::Declared tfvars file '${{ vars.TERRAFORM_TFVARS }}' not found."
+          else
+            echo "TF_VARS_FILE=${{ vars.TERRAFORM_TFVARS }}" >> "$GITHUB_ENV"
+            echo "Using tfvars file: ${{ vars.TERRAFORM_TFVARS }}"
+          fi
+
+      - name: Set up AWS CLI
+        uses: aws-actions/setup-sam@v2
+
+      - name: Terraform Init
+        id: init
+        shell: bash
+        working-directory: ${{ env.WD }}
+        env:
+          TF_CLI_ARGS_init: "-lock-timeout=${{ env.TF_LOCK_TIMEOUT }}"
+        run: |
+          set -e
+          terraform init -input=false ${{ inputs.additional_init_args }}
+
+      - name: Terraform Validate
+        id: validate
+        shell: bash
+        working-directory: ${{ env.WD }}
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        shell: bash
+        working-directory: ${{ env.WD }}
+        run: |
+          terraform plan -out=tfplan-${{ github.event.pull_request.number }}
+
+      - name: Upload Plan to Artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: terraform-plan-${{ github.event.pull_request.number }}
+          path: ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }}
+
+      # - name: Upload Plan to S3
+      #   run: |
+      #     aws s3 cp ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/${{ github.event.pull_request.base.ref }}/

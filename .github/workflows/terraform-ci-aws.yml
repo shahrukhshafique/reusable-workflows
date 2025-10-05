@@ -81,8 +81,6 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: '${{ secrets.ASSUME_ROLE_ARN }}'
-          #role-name: ${{ secrets.ROLE_NAME }}
-          #source-account-id: ${{ secrets.ACCOUNT_ID }}
           aws-region: ${{ vars.AWS_REGION }}
           role-session-name: terraform-ci-${{ github.run_id }}
           role-duration-seconds: 7200
@@ -93,7 +91,6 @@ jobs:
           terraform -version
           aws sts get-caller-identity || true
 
-      # We just record the tfvars path (if provided) for visibility; not used in init/validate.
       - name: Register tfvars file (if provided)
         if: ${{ vars.TERRAFORM_TFVARS != '' }}
         shell: bash
