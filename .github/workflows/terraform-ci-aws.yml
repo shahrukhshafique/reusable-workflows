@@ -67,6 +67,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.base.ref || github.ref }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -79,7 +80,9 @@ jobs:
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.ASSUME_ROLE_ARN }}
+          role-to-assume: '${{ secrets.ASSUME_ROLE_ARN }}'
+          #role-name: ${{ secrets.ROLE_NAME }}
+          #source-account-id: ${{ secrets.ACCOUNT_ID }}
           aws-region: ${{ vars.AWS_REGION }}
           role-session-name: terraform-ci-${{ github.run_id }}
           role-duration-seconds: 7200
