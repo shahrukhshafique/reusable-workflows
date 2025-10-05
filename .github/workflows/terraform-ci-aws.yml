@@ -3,10 +3,6 @@ name: Reusable - Terraform CI (AWS - No Plan Minimal)
 on:
   workflow_call:
     inputs:
-      working_directory:
-        type: string
-        required: false
-        default: "."
       tflint:
         type: boolean
         required: false
