@@ -175,9 +175,6 @@ jobs:
             echo "| fmt | $(status '${{ steps.fmt.outcome }}') | strict |"
             echo "| init | $(status '${{ steps.init.outcome }}') | strict |"
             echo "| validate | $(status '${{ steps.validate.outcome }}') | strict |"
-            if [ "${{ inputs.tflint }}" = "true" ]; then
-              echo "| tflint | $(status '${{ steps.tflint_run.outcome }}') | strict |"
-            fi
             if [ "${{ inputs.checkov }}" = "true" ]; then
               mode="soft"
               if [ "${{ inputs.checkov_soft_fail }}" = "false" ]; then mode="strict"; fi
