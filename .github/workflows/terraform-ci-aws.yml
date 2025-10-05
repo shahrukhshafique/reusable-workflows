@@ -55,12 +55,12 @@ jobs:
     environment:
       name: ${{ github.event.pull_request.base.ref }}
     concurrency:
-      group: terraform-ci-${{ github.workflow }}-${{ github.ref }}-${{ inputs.working_directory }}
+      group: terraform-ci-${{ github.workflow }}-${{ github.ref }}-${{ vars.WORKING_DIRECTORY }}
       cancel-in-progress: false
     env:
       TF_IN_AUTOMATION: "true"
       TF_INPUT: "false"
-      WD: ${{ inputs.working_directory }}
+      WD: ${{ vars.WORKING_DIRECTORY }}
       TF_LOCK_TIMEOUT: ${{ inputs.lock_timeout }}
 
     steps:
