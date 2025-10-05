@@ -1,27 +1,18 @@
-name: "Terraform Plan"
+name: Reusable - Terraform Plan
 
 on:
   workflow_call:
-    inputs:
-      additional_init_args:
-        type: string
-        required: false
-        default: ""
     secrets:
       ASSUME_ROLE_ARN:
         required: true
-        description: "AWS IAM role to assume via OIDC for backend/provider init (was input assume_role_arn)"
+        description: "AWS IAM role to assume via OIDC for backend/provider init"
       DEVOPS_WORKFLOW_TOKEN:
         required: true
         description: "Reserved for future use (e.g., PR annotations/comments)"
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
-  terraform-ci:
-    name: Terraform Static / Init Validation
+  terraform-plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.pull_request.base.ref }}
@@ -85,12 +76,6 @@ jobs:
         run: |
           set -e
           terraform init -input=false ${{ inputs.additional_init_args }}
-
-      - name: Terraform Validate
-        id: validate
-        shell: bash
-        working-directory: ${{ env.WD }}
-        run: terraform validate -no-color
 
       - name: Terraform Plan
         id: plan

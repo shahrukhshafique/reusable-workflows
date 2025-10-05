@@ -1,4 +1,4 @@
-name: Reusable - Terraform CI (AWS - No Plan Minimal)
+name: Reusable - Terraform CI
 
 on:
   workflow_call:
