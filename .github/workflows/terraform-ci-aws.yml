@@ -73,14 +73,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ vars.terraform_version }}
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ASSUME_ROLE_ARN }}
-          aws-region: ${{ vars.aws_region }}
+          aws-region: ${{ vars.AWS_REGION }}
           role-session-name: terraform-ci-${{ github.run_id }}
           role-duration-seconds: 7200
 
@@ -92,14 +92,14 @@ jobs:
 
       # We just record the tfvars path (if provided) for visibility; not used in init/validate.
       - name: Register tfvars file (if provided)
-        if: ${{ vars.terraform_tfvars != '' }}
+        if: ${{ vars.TERRAFORM_TFVARS != '' }}
         shell: bash
         run: |
-          if [ ! -f "${{ vars.terraform_tfvars }}" ]; then
-            echo "::warning::Declared tfvars file '${{ vars.terraform_tfvars }}' not found."
+          if [ ! -f "${{ vars.TERRAFORM_TFVARS }}" ]; then
+            echo "::warning::Declared tfvars file '${{ vars.TERRAFORM_TFVARS }}' not found."
           else
-            echo "TF_VARS_FILE=${{ vars.terraform_tfvars }}" >> "$GITHUB_ENV"
-            echo "Using tfvars file: ${{ vars.terraform_tfvars }}"
+            echo "TF_VARS_FILE=${{ vars.TERRAFORM_TFVARS }}" >> "$GITHUB_ENV"
+            echo "Using tfvars file: ${{ vars.TERRAFORM_TFVARS }}"
           fi
 
       - name: Terraform FMT
@@ -203,7 +203,7 @@ jobs:
               echo "| checkov | $(status '${{ steps.checkov.outcome }}') | $mode |"
             fi
             echo ""
-            echo "- AWS Region: ${{ vars.aws_region }}"
+            echo "- AWS Region: ${{ vars.AWS_REGION }}"
             echo "- Assumed Role: yes"
             echo ""
             echo "_Workflow: ${{ github.workflow }} • Run ID: ${{ github.run_id }}_"
