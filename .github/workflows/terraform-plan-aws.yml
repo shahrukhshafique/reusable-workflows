@@ -84,14 +84,14 @@ jobs:
           TF_CLI_ARGS_init: "-lock-timeout=${{ env.TF_LOCK_TIMEOUT }}"
         run: |
           set -e
-          terraform init -input=false ${{ inputs.additional_init_args }}
+          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
 
       - name: Terraform Plan
         id: plan
         shell: bash
         working-directory: ${{ env.WD }}
         run: |
-          terraform plan -var-file=../../${{ vars.TERRAFORM_TFVARS }} -out=tfplan-${{ github.event.pull_request.number }}
+          terraform plan -var-file=${{ vars.TERRAFORM_TFVARS }} -out=tfplan-${{ github.event.pull_request.number }}
 
       - name: Upload Plan to Artifact
         uses: actions/upload-artifact@v4.3.1
