@@ -21,8 +21,8 @@ on:
         description: "Reserved for future use (e.g., PR annotations/comments)"
 
 jobs:
-  terraform-plan:
-    name: Terraform Plan
+  terraform-apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.pull_request.base.ref }}
