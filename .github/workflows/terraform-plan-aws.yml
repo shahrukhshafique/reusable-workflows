@@ -101,4 +101,5 @@ jobs:
 
       - name: Upload Plan to S3
         run: |
-          aws s3 cp ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/${{ github.event.pull_request.base.ref }}/
+          aws s3 cp ${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.base.ref }}/
+
