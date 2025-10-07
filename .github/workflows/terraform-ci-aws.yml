@@ -138,7 +138,7 @@ jobs:
           TF_CLI_ARGS_init: "-lock-timeout=${{ env.TF_LOCK_TIMEOUT }}"
         run: |
           set -e
-          terraform init -input=false ${{ inputs.additional_init_args }}
+          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
 
       - name: Terraform Validate
         id: validate
@@ -188,4 +188,5 @@ jobs:
         if: ${{ failure() }}
         run: |
           echo "One or more Terraform CI validation steps failed."
+
           exit 1
