@@ -108,7 +108,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform-plan
     environment:
-      name: apply   # configure this environment in the repo with required approval
+      #name: apply   # configure this environment in the repo with required approval
+      name: ${{ github.event.pull_request.base.ref }}
     concurrency:
       group: terraform-ci-${{ github.workflow }}-${{ github.ref }}-${{ vars.WORKING_DIRECTORY }}
       cancel-in-progress: false
