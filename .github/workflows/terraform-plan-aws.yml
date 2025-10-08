@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref || github.ref }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -103,7 +103,8 @@ jobs:
 
       - name: Upload Plan to S3
         run: |
-          aws s3 cp ${{ env.WD }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.base.ref }}/
+          aws s3 cp ${{ env.WD }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.head.ref }}/
+
 
 
 
