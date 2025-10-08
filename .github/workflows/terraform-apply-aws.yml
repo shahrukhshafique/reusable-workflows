@@ -77,9 +77,9 @@ jobs:
       - name: Set up AWS CLI
         uses: aws-actions/setup-sam@v2
 
-      - name: Download Plan from S3
-        run: |
-          aws s3 cp s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} ${{ env.WD }}/tfplan-${{ github.event.pull_request.number }}
+      # - name: Download Plan from S3
+      #   run: |
+      #     aws s3 cp s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.base.ref }}/tfplan-${{ github.event.pull_request.number }} ${{ env.WD }}/tfplan-${{ github.event.pull_request.number }}
 
       - name: Terraform Init
         id: init
@@ -89,7 +89,8 @@ jobs:
           TF_CLI_ARGS_init: "-lock-timeout=${{ env.TF_LOCK_TIMEOUT }}"
         run: |
           set -e
-          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
+          ## terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
+          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }}
 
       - name: Terraform Apply
         id: apply
@@ -97,7 +98,9 @@ jobs:
         working-directory: ${{ env.WD }}
         run: |
           echo "Applying Terraform Plan tfplan-${{ github.event.pull_request.number }}"
-          terraform apply -input=false -auto-approve tfplan-${{ github.event.pull_request.number }} | tee output.txt
+          ## terraform apply -input=false -auto-approve tfplan-${{ github.event.pull_request.number }} | tee output.txt
+          terraform apply -var-file=${{ vars.TERRAFORM_TFVARS }} -auto-approve
 
       
+
 
