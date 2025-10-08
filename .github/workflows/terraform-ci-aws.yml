@@ -67,7 +67,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref || github.ref }}
+          ref: ${{ github.event.pull_request.head.ref|| github.ref }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -190,3 +190,4 @@ jobs:
           echo "One or more Terraform CI validation steps failed."
 
           exit 1
+
