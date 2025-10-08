@@ -172,9 +172,20 @@ jobs:
           terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }}
 
       - name: Terraform Apply
-        id: apply
+        id: apply1
         shell: bash
         working-directory: ${{ env.WD }}
         run: |
           echo "Applying configuration (direct apply with tfvars)"
             terraform apply -var-file=${{ vars.TERRAFORM_TFVARS }} -auto-approve
+        continue-on-error: true
+
+      - name: Terraform Apply
+        id: apply2
+        shell: bash
+        working-directory: ${{ env.WD }}
+        run: |
+          echo "Applying configuration (direct apply with tfvars)"
+            terraform apply -var-file=${{ vars.TERRAFORM_TFVARS }} -auto-approve
+
+    
