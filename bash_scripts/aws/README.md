@@ -11,16 +11,16 @@
    bash oidc-script.sh
    ```
 
-3. Verify Role Exists:
+3. Verify OIDC Provider:
+   ```bash
+   aws iam list-open-id-connect-providers
+   ```
+
+4. Verify Role Exists:
    ```bash
    aws iam get-role --role-name github-terraform-role
+   aws iam get-role --role-name github-terraform-role --query 'Role.Arn' --output text
    ```
-
-4. Deploy the infrastructure:
-   ```bash
-   terraform apply
-   ```
-
 ---
 
 ### Set GitHub Secret
