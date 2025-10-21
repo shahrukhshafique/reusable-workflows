@@ -1,4 +1,4 @@
-# Terraform AWS Project
+# AWS Scripts
 
 ### Setup
 1. Make it executable again if you overwrite it:
