@@ -90,7 +90,7 @@ jobs:
         run: |
           set -e
           ## terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
-          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }}
+          terraform init -backend-config="$GITHUB_WORKSPACE/${{ vars.TERRAFORM_BACKEND }}"
 
       - name: Terraform Apply
         id: apply1
@@ -98,7 +98,7 @@ jobs:
         working-directory: ${{ env.WD }}
         run: |
           echo "Applying configuration (direct apply with tfvars)"
-            terraform apply -var-file=${{ vars.TERRAFORM_TFVARS }} -auto-approve
+            terraform apply -var-file="$GITHUB_WORKSPACE/${{ vars.TERRAFORM_TFVARS }}" -auto-approve
         continue-on-error: true
 
       - name: Terraform Apply
@@ -108,9 +108,10 @@ jobs:
         working-directory: ${{ env.WD }}
         run: |
           echo "Applying configuration (direct apply with tfvars)"
-            terraform apply -var-file=${{ vars.TERRAFORM_TFVARS }} -auto-approve
+            terraform apply -var-file="$GITHUB_WORKSPACE/${{ vars.TERRAFORM_TFVARS }}" -auto-approve
 
       
+
 
 
 
