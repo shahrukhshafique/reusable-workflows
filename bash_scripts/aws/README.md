@@ -1,4 +1,4 @@
-# AWS Scripts
+# AWS OIDC Scripts
 
 ### Setup
 1. Make it executable again if you overwrite it:
