@@ -1,0 +1,29 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GitHubOIDCTerraformAllCoreBranchesAndPRs",
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::009887378489:oidc-provider/token.actions.githubusercontent.com"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "token.actions.githubusercontent.com:sub": [
+                        "repo:shahrukhshafique/curato-infra:*",
+                        "repo:shahrukhshafique/curato-backend:*",
+                        "repo:shahrukhshafique/reusable-workflows:*",
+                        "repo:sal-ios/curato-infra:*",
+                        "repo:sal-ios/curato-backend:*",
+                        "repo:sal-ios/curato-frontend:*",
+                        "repo:sal-ios/curato-reusable-workflows:*"
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "StateBackendS3Full",
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:ListBucket",
+				"s3:GetBucketVersioning",
+				"s3:GetObjectVersion",
+				"s3:DeleteObjectVersion",
+				"s3:AbortMultipartUpload"
+			],
+			"Resource": [
+				"arn:aws:s3:::curato-tf-state-bucket",
+				"arn:aws:s3:::curato-tf-state-bucket/*"
+			]
+		},
+		{
+			"Sid": "CoreInfraManagement",
+			"Effect": "Allow",
+			"Action": [
+				"ec2:*",
+				"elasticloadbalancing:*",
+				"autoscaling:*",
+				"logs:*",
+				"cloudwatch:*",
+				"events:*",
+				"rds:*",
+				"eks:*",
+				"ecr:*",
+				"ecs:*",
+				"lambda:*",
+				"apigateway:*",
+				"ssm:*",
+				"secretsmanager:*",
+				"sns:*",
+				"sqs:*",
+				"route53:*",
+				"kms:Describe*",
+				"kms:Decrypt",
+				"kms:Encrypt",
+				"kms:GenerateDataKey*",
+				"kms:ListKeys",
+				"kms:ListAliases",
+				"tag:GetResources",
+				"tag:TagResources",
+				"tag:UntagResources",
+				"sts:GetCallerIdentity"
+			],
+			"Resource": "*"
+		},
+		{
+			"Sid": "AllowPassRoleForServiceLinked",
+			"Effect": "Allow",
+			"Action": [
+				"iam:PassRole"
+			],
+			"Resource": "*",
+			"Condition": {
+				"StringLike": {
+					"iam:PassedToService": [
+						"ec2.amazonaws.com",
+						"ecs-tasks.amazonaws.com",
+						"eks.amazonaws.com",
+						"lambda.amazonaws.com",
+						"logs.amazonaws.com",
+						"elasticloadbalancing.amazonaws.com",
+						"rds.amazonaws.com"
+					]
+				}
+			}
+		}
+	]
+}
