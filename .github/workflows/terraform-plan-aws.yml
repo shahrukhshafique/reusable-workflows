@@ -86,7 +86,8 @@ jobs:
           set -e
           ##terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }} -input=false ${{ inputs.additional_init_args }}
           pwd
-          terraform init -backend-config=${{ vars.TERRAFORM_BACKEND }}
+          echo $GITHUB_WORKSPACE
+          terraform init -backend-config="$GITHUB_WORKSPACE/${{ vars.TERRAFORM_BACKEND }}"
 
       - name: Terraform Plan
         id: plan
@@ -94,7 +95,7 @@ jobs:
         working-directory: ${{ env.WD }}
         run: |
           pwd
-          terraform plan -var-file=${{ vars.TERRAFORM_TFVARS }} -out=tfplan-${{ github.event.pull_request.number }}
+          terraform plan -var-file="$GITHUB_WORKSPACE/${{ vars.TERRAFORM_TFVARS }}" -out=tfplan-${{ github.event.pull_request.number }}
           
 
       - name: Upload Plan to Artifact
@@ -106,6 +107,7 @@ jobs:
       - name: Upload Plan to S3
         run: |
           aws s3 cp ${{ env.WD }}/tfplan-${{ github.event.pull_request.number }} s3://${{ vars.PLAN_S3_BUCKET}}/tf-plans/${{ github.event.pull_request.head.ref }}/
+
 
 
 
