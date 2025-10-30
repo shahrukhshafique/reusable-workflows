@@ -15,8 +15,8 @@
 				"s3:AbortMultipartUpload"
 			],
 			"Resource": [
-				"arn:aws:s3:::curato-tf-state-bucket",
-				"arn:aws:s3:::curato-tf-state-bucket/*"
+				"arn:aws:s3:::<tf-state-bucket>",
+				"arn:aws:s3:::<tf-state-bucket>/*"
 			]
 		},
 		{
@@ -75,4 +75,5 @@
 			}
 		}
 	]
+
 }
