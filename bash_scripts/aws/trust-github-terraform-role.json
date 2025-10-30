@@ -5,7 +5,7 @@
             "Sid": "GitHubOIDCTerraformAllCoreBranchesAndPRs",
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::009887378489:oidc-provider/token.actions.githubusercontent.com"
+                "Federated": "arn:aws:iam::<ACCOUNT-ID>:oidc-provider/token.actions.githubusercontent.com"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
@@ -14,9 +14,6 @@
                 },
                 "StringLike": {
                     "token.actions.githubusercontent.com:sub": [
-                        "repo:shahrukhshafique/curato-infra:*",
-                        "repo:shahrukhshafique/curato-backend:*",
-                        "repo:shahrukhshafique/reusable-workflows:*",
                         "repo:sal-ios/curato-infra:*",
                         "repo:sal-ios/curato-backend:*",
                         "repo:sal-ios/curato-frontend:*",
@@ -26,4 +23,5 @@
             }
         }
     ]
+
 }
